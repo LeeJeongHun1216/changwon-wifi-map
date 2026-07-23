@@ -113,45 +113,44 @@ npm run build
 npm run preview
 ```
 
-## 배포 (Vercel + Render)
+## 배포 (Vercel 권장 — 카드 불필요)
+
+> **Render Blueprint**는 계정에 **카드 등록**을 요구하는 경우가 많습니다.  
+> 이 프로젝트는 **Vercel 하나**로 프론트 + API(`/api/wifi`)까지 배포할 수 있습니다.
 
 ### 1. GitHub
 
-```bash
-git init
-git add .
-git commit -m "Initial commit: Changwon Public Wi-Fi Map"
-git remote add origin https://github.com/LeeJeongHun1216/changwon-wifi-map.git
-git push -u origin main
-```
+저장소: https://github.com/LeeJeongHun1216/changwon-wifi-map
 
-### 2. Render (백엔드 API)
+### 2. Vercel 배포
 
-1. [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint** 또는 **Web Service**
-2. GitHub 저장소 연결
-3. `render.yaml` 사용 시 자동 설정 (Root: `server`)
-4. **Environment Variables** 추가:
-   - `ODCLOUD_SERVICE_KEY` = 공공데이터 인증키
-5. 배포 후 URL 확인 (예: `https://changwon-wifi-map-api.onrender.com`)
+1. [Vercel Dashboard](https://vercel.com) → **Add New Project** → `changwon-wifi-map` import
+2. Framework: **Vite** (Build: `npm run build`, Output: `dist`)
+3. **Environment Variables** (Production):
 
-### 3. Vercel (프론트엔드)
+| 변수 | 값 |
+|------|-----|
+| `VITE_KAKAO_MAP_API_KEY` | 카카오 JavaScript 키 |
+| `ODCLOUD_SERVICE_KEY` | 공공데이터 인증키 (API용, 서버만 사용) |
 
-1. [Vercel Dashboard](https://vercel.com) → **Add New Project** → GitHub 저장소 import
-2. Framework Preset: **Vite**
-3. **Environment Variables**:
-   - `VITE_KAKAO_MAP_API_KEY` = 카카오 JavaScript 키
-   - `VITE_API_BASE_URL` = Render 백엔드 URL (슬래시 없이)
-4. Deploy
+4. `VITE_API_BASE_URL`은 **비워 두세요** → 같은 Vercel 도메인의 `/api/wifi` 사용
+5. **Deploy**
 
-### 4. 카카오맵 도메인 등록
+배포 확인:
 
-Kakao Developers → 앱 → **Web 플랫폼**에 Vercel 배포 URL 추가  
-(예: `https://your-project.vercel.app`)
+- `https://<프로젝트>.vercel.app/api/health`
+- `https://<프로젝트>.vercel.app/api/wifi`
 
-### 로컬 vs 배포 API
+### 3. 카카오맵 도메인
 
-| 환경 | API 호출 |
-|------|----------|
+Kakao Developers → **Web 플랫폼**에 `https://<프로젝트>.vercel.app` 등록
+
+### (선택) Render / 로컬 Express
+
+로컬 개발 시 `server/` + `npm run dev` (포트 3001). Render는 유료·카드 정책 때문에 **필수 아님**.
+
+| 환경 | API |
+|------|-----|
 | 로컬 | Vite proxy `/api` → `localhost:3001` |
-| Vercel | `VITE_API_BASE_URL` → Render `/api/wifi` |
+| Vercel | `/api/wifi` (Serverless Functions) |
 
