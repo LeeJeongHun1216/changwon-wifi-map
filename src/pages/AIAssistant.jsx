@@ -44,10 +44,11 @@ export default function AIAssistant() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-y-auto bg-bg">
+    <div className="flex h-dvh flex-col overflow-hidden bg-bg">
       <Header />
 
-      <div className="mx-auto w-full max-w-3xl flex-1 p-4 pb-8 md:p-8">
+      <main className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+        <div className="mx-auto w-full max-w-3xl p-4 pb-8 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,7 +80,8 @@ export default function AIAssistant() {
         </div>
 
         <AIChat onApplyActions={handleApplyActions} expanded />
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

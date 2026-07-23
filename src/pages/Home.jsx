@@ -211,7 +211,11 @@ export default function Home() {
           >
             {mobilePanel === 'search' && <SidebarContent {...sidebarProps} compact />}
             {mobilePanel === 'ai' && (
-              <AIChat onApplyActions={handleAssistantActions} expanded />
+              <AIChat
+                onApplyActions={handleAssistantActions}
+                expanded
+                disableEnterAnimation
+              />
             )}
             {mobilePanel === 'filter' && (
               <div className="glass-card rounded-2xl p-4">

@@ -8,7 +8,11 @@ import {
   messageNeedsLocation,
 } from '../services/assistantService';
 
-export default function AIChat({ onApplyActions, expanded = false }) {
+export default function AIChat({
+  onApplyActions,
+  expanded = false,
+  disableEnterAnimation = false,
+}) {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,9 +75,9 @@ export default function AIChat({ onApplyActions, expanded = false }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
+      initial={disableEnterAnimation ? false : { opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.45, delay: 0.3 }}
+      transition={{ duration: disableEnterAnimation ? 0 : 0.45, delay: disableEnterAnimation ? 0 : 0.3 }}
       className={`glass-card flex flex-col rounded-2xl p-5 ${expanded ? 'min-h-[420px]' : ''}`}
     >
       <div className="mb-3 flex items-center gap-2">

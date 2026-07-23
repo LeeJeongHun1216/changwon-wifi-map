@@ -16,6 +16,7 @@ export default function SearchPanel({
   year,
   onYearChange,
   years,
+  disableEnterAnimation = false,
 }) {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,9 +25,9 @@ export default function SearchPanel({
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
+      initial={disableEnterAnimation ? false : { opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.45, delay: 0.1 }}
+      transition={{ duration: disableEnterAnimation ? 0 : 0.45, delay: disableEnterAnimation ? 0 : 0.1 }}
       className="glass-card rounded-2xl p-5"
     >
       <div className="mb-4 flex items-center gap-2">

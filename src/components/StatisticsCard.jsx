@@ -2,14 +2,14 @@ import { motion } from 'framer-motion';
 import { BarChart3 } from 'lucide-react';
 import { CARRIERS, getCarrierStyle } from '../utils/carrierColors';
 
-export default function StatisticsCard({ stats, referenceDate }) {
+export default function StatisticsCard({ stats, referenceDate, disableEnterAnimation = false }) {
   const carriers = CARRIERS.map((key) => ({ key, count: stats[key] ?? 0 }));
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
+      initial={disableEnterAnimation ? false : { opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.45, delay: 0.2 }}
+      transition={{ duration: disableEnterAnimation ? 0 : 0.45, delay: disableEnterAnimation ? 0 : 0.2 }}
       className="overflow-hidden rounded-2xl shadow-lg shadow-primary/10"
     >
       <div className="relative bg-gradient-to-br from-primary via-primary to-primary-light p-5 text-white">

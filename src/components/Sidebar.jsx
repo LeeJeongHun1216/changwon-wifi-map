@@ -27,8 +27,13 @@ export function SidebarContent({
         year={year}
         onYearChange={onYearChange}
         years={years}
+        disableEnterAnimation={compact}
       />
-      <StatisticsCard stats={stats} referenceDate={referenceDate} />
+      <StatisticsCard
+        stats={stats}
+        referenceDate={referenceDate}
+        disableEnterAnimation={compact}
+      />
       {!compact && <AIChat onApplyActions={onAssistantActions} />}
     </div>
   );
