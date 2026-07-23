@@ -2,7 +2,7 @@ import SearchPanel from './SearchPanel';
 import StatisticsCard from './StatisticsCard';
 import AIChat from './AIChat';
 
-export default function Sidebar({
+export function SidebarContent({
   query,
   onQueryChange,
   onSearch,
@@ -14,9 +14,10 @@ export default function Sidebar({
   stats,
   referenceDate,
   onAssistantActions,
+  compact = false,
 }) {
   return (
-    <aside className="flex w-full shrink-0 flex-col gap-4 overflow-y-auto p-4 md:w-[380px] md:p-5">
+    <div className={`flex flex-col gap-4 ${compact ? '' : ''}`}>
       <SearchPanel
         query={query}
         onQueryChange={onQueryChange}
@@ -28,7 +29,15 @@ export default function Sidebar({
         years={years}
       />
       <StatisticsCard stats={stats} referenceDate={referenceDate} />
-      <AIChat onApplyActions={onAssistantActions} />
+      {!compact && <AIChat onApplyActions={onAssistantActions} />}
+    </div>
+  );
+}
+
+export default function Sidebar(props) {
+  return (
+    <aside className="hidden w-[380px] shrink-0 flex-col gap-4 overflow-y-auto p-5 md:flex">
+      <SidebarContent {...props} />
     </aside>
   );
 }

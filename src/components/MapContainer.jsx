@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { MapPin, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { loadKakaoMapScript, createMarkerElement } from '../utils/kakaoMap';
 import { CHANGWON_CENTER, getCarrierCategory } from '../utils/carrierColors';
 import { parseCoordinate } from '../utils/filters';
@@ -50,6 +50,7 @@ export default function MapContainer({
   shouldAutoFit = false,
   onInfoCardClose,
   mapResetKey = 0,
+  isMobileLayout = false,
 }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -320,11 +321,15 @@ export default function MapContainer({
   };
 
   return (
-    <div className="relative min-h-[400px] flex-1 overflow-hidden rounded-2xl md:min-h-0 md:rounded-none">
+    <div
+      className={`relative flex-1 overflow-hidden md:min-h-0 ${
+        isMobileLayout ? 'min-h-0 rounded-none' : 'min-h-[400px] rounded-2xl md:rounded-none'
+      }`}
+    >
       <div
         id="map-container"
         ref={mapRef}
-        className="absolute inset-0 h-full w-full rounded-2xl md:rounded-none"
+        className="absolute inset-0 h-full w-full md:rounded-none"
       />
 
       {mapError && (
@@ -356,24 +361,16 @@ export default function MapContainer({
             onZoomIn={handleZoomIn}
             onZoomOut={handleZoomOut}
             onToggleMapType={handleToggleMapType}
+            isMobileLayout={isMobileLayout}
           />
 
           {locating && (
-            <div className="absolute right-4 top-20 z-20 rounded-xl bg-white/90 px-3 py-2 text-xs font-medium text-primary shadow-lg">
+            <div className="absolute right-3 top-14 z-20 rounded-xl bg-white/90 px-3 py-2 text-xs font-medium text-primary shadow-lg md:right-4 md:top-20">
               위치 확인 중...
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={handleLocate}
-            className="absolute bottom-4 right-4 z-20 flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/30 md:hidden"
-          >
-            <MapPin className="h-4 w-4" />
-            내 위치
-          </button>
-
-          <StatusBar stats={stats} />
+          <StatusBar stats={stats} isMobileLayout={isMobileLayout} />
 
           {selectedWifi && (
             <WifiInfoCard wifi={selectedWifi} onClose={handleCloseInfo} />

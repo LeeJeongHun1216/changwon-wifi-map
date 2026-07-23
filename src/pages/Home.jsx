@@ -2,8 +2,12 @@ import { useMemo, useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+import Sidebar, { SidebarContent } from '../components/Sidebar';
 import MapContainer from '../components/MapContainer';
+import MobileBottomSheet from '../components/MobileBottomSheet';
+import MobileMapControls from '../components/MobileMapControls';
+import AIChat from '../components/AIChat';
+import { CarrierLegendContent } from '../components/CarrierLegend';
 import { useWifiData } from '../hooks/useWifiData';
 import { CARRIERS } from '../utils/carrierColors';
 import {
@@ -15,6 +19,12 @@ import {
 
 const DEFAULT_VISIBLE = Object.fromEntries(CARRIERS.map((c) => [c, true]));
 
+const PANEL_TITLES = {
+  search: 'Wi-Fi 검색',
+  ai: 'AI Wi-Fi Assistant',
+  filter: '지도 필터',
+};
+
 export default function Home() {
   const { data, loading, error } = useWifiData();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +35,7 @@ export default function Home() {
   const [visibleCarriers, setVisibleCarriers] = useState(DEFAULT_VISIBLE);
   const [clusterEnabled, setClusterEnabled] = useState(false);
   const [mapResetKey, setMapResetKey] = useState(0);
+  const [mobilePanel, setMobilePanel] = useState(null);
 
   useEffect(() => {
     const q = searchParams.get('q');
@@ -45,7 +56,6 @@ export default function Home() {
 
   const years = useMemo(() => getAvailableYears(data), [data]);
 
-  /** 검색·통신사 탭·설치년도 필터만 적용 (지도에 넘길 원본) */
   const searchFilteredData = useMemo(
     () =>
       filterWifiData(data, {
@@ -56,7 +66,6 @@ export default function Home() {
     [data, searchQuery, carrier, year],
   );
 
-  /** 범례 ON/OFF까지 반영된 표시용 데이터·통계 */
   const visibleMapData = useMemo(
     () => filterByVisibleCarriers(searchFilteredData, visibleCarriers),
     [searchFilteredData, visibleCarriers],
@@ -104,6 +113,7 @@ export default function Home() {
       setYear('전체');
       setVisibleCarriers(DEFAULT_VISIBLE);
       setMapResetKey((k) => k + 1);
+      setMobilePanel(null);
       return;
     }
 
@@ -124,11 +134,27 @@ export default function Home() {
     if (actions.resetMap) {
       setMapResetKey((k) => k + 1);
     }
+
+    setMobilePanel(null);
   }, []);
+
+  const sidebarProps = {
+    query,
+    onQueryChange: setQuery,
+    onSearch: handleSearch,
+    carrier,
+    onCarrierChange: handleCarrierChange,
+    year,
+    onYearChange: setYear,
+    years,
+    stats: allStats,
+    referenceDate,
+    onAssistantActions: handleAssistantActions,
+  };
 
   if (loading) {
     return (
-      <div className="flex h-full flex-col bg-bg">
+      <div className="flex h-dvh flex-col bg-bg">
         <Header />
         <div className="flex flex-1 items-center justify-center">
           <motion.div
@@ -143,7 +169,7 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="flex h-full flex-col bg-bg">
+      <div className="flex h-dvh flex-col bg-bg">
         <Header />
         <div className="flex flex-1 items-center justify-center p-8">
           <p className="text-center text-red-500">{error}</p>
@@ -153,25 +179,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-bg">
+    <div className="flex h-dvh flex-col overflow-hidden bg-bg">
       <Header />
 
-      <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
-        <Sidebar
-          query={query}
-          onQueryChange={setQuery}
-          onSearch={handleSearch}
-          carrier={carrier}
-          onCarrierChange={handleCarrierChange}
-          year={year}
-          onYearChange={setYear}
-          years={years}
-          stats={allStats}
-          referenceDate={referenceDate}
-          onAssistantActions={handleAssistantActions}
-        />
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
+        <Sidebar {...sidebarProps} />
 
-        <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-0">
+        <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden md:p-0">
           <MapContainer
             wifiData={searchFilteredData}
             stats={displayStats}
@@ -182,7 +196,34 @@ export default function Home() {
             shouldAutoFit={shouldAutoFit}
             onInfoCardClose={handleInfoCardClose}
             mapResetKey={mapResetKey}
+            isMobileLayout
           />
+
+          <MobileMapControls
+            activePanel={mobilePanel}
+            onChange={(panel) => setMobilePanel(panel)}
+          />
+
+          <MobileBottomSheet
+            open={Boolean(mobilePanel)}
+            onClose={() => setMobilePanel(null)}
+            title={PANEL_TITLES[mobilePanel] ?? ''}
+          >
+            {mobilePanel === 'search' && <SidebarContent {...sidebarProps} compact />}
+            {mobilePanel === 'ai' && (
+              <AIChat onApplyActions={handleAssistantActions} expanded />
+            )}
+            {mobilePanel === 'filter' && (
+              <div className="glass-card rounded-2xl p-4">
+                <CarrierLegendContent
+                  visibleCarriers={visibleCarriers}
+                  onToggle={handleToggleCarrier}
+                  clusterEnabled={clusterEnabled}
+                  onClusterToggle={() => setClusterEnabled((v) => !v)}
+                />
+              </div>
+            )}
+          </MobileBottomSheet>
         </main>
       </div>
     </div>

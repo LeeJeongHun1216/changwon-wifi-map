@@ -1,14 +1,14 @@
 import { motion } from 'framer-motion';
 import { CARRIERS, getCarrierStyle } from '../utils/carrierColors';
 
-export default function CarrierLegend({ visibleCarriers, onToggle, clusterEnabled, onClusterToggle }) {
+export function CarrierLegendContent({
+  visibleCarriers,
+  onToggle,
+  clusterEnabled,
+  onClusterToggle,
+}) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.45, delay: 0.25 }}
-      className="glass-card absolute right-4 top-4 z-20 rounded-2xl p-4"
-    >
+    <>
       <p className="mb-3 text-xs font-bold text-slate-600">통신사 표시</p>
       <div className="space-y-2.5">
         {CARRIERS.map((carrier) => {
@@ -47,6 +47,19 @@ export default function CarrierLegend({ visibleCarriers, onToggle, clusterEnable
           />
         </label>
       </div>
+    </>
+  );
+}
+
+export default function CarrierLegend(props) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.45, delay: 0.25 }}
+      className="glass-card absolute right-4 top-4 z-20 hidden rounded-2xl p-4 md:block"
+    >
+      <CarrierLegendContent {...props} />
     </motion.div>
   );
 }
@@ -58,7 +71,7 @@ function ToggleSwitch({ checked, onChange, color }) {
       role="switch"
       aria-checked={checked}
       onClick={onChange}
-      className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${
+      className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ${
         checked ? '' : 'bg-slate-200'
       }`}
       style={checked ? { backgroundColor: color } : undefined}

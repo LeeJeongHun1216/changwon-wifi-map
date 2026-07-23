@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Wifi, Calendar, Map } from 'lucide-react';
 import { CARRIERS, getCarrierStyle } from '../utils/carrierColors';
 
-export default function StatusBar({ stats }) {
+export default function StatusBar({ stats, isMobileLayout = false }) {
   const carrierItems = CARRIERS.map((key) => ({
     icon: Wifi,
     label: getCarrierStyle(key).label,
@@ -31,6 +31,8 @@ export default function StatusBar({ stats }) {
       color: '#64748B',
     },
   ];
+
+  const mobileBottom = isMobileLayout ? 'bottom-[4.25rem]' : 'bottom-16 xl:hidden';
 
   return (
     <>
@@ -65,9 +67,9 @@ export default function StatusBar({ stats }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="glass-card-strong absolute bottom-16 left-1/2 z-20 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-2xl px-3 py-2.5 xl:hidden"
+        className={`glass-card-strong absolute left-1/2 z-20 flex w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl px-2 py-2 xl:hidden ${mobileBottom}`}
       >
-        <div className="flex w-full items-center justify-around gap-1 overflow-x-auto text-center">
+        <div className="flex w-full items-center gap-1 overflow-x-auto text-center">
           <MiniStat label="전체" value={stats.total} color="#2563EB" />
           {CARRIERS.map((key) => (
             <MiniStat
@@ -85,9 +87,9 @@ export default function StatusBar({ stats }) {
 
 function MiniStat({ label, value, color }) {
   return (
-    <div className="shrink-0 px-1">
-      <p className="text-[10px] font-medium text-slate-400">{label}</p>
-      <p className="text-sm font-bold" style={{ color }}>
+    <div className="shrink-0 px-1.5">
+      <p className="text-[9px] font-medium text-slate-400 md:text-[10px]">{label}</p>
+      <p className="text-xs font-bold md:text-sm" style={{ color }}>
         {value.toLocaleString()}
       </p>
     </div>

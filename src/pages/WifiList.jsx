@@ -16,10 +16,10 @@ export default function WifiList() {
   );
 
   return (
-    <div className="flex min-h-full flex-col bg-bg">
+    <div className="flex min-h-dvh flex-col overflow-y-auto bg-bg">
       <Header />
 
-      <div className="mx-auto w-full max-w-5xl flex-1 p-6 md:p-8">
+      <div className="mx-auto w-full max-w-5xl flex-1 p-4 pb-8 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
