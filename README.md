@@ -132,6 +132,7 @@ npm run preview
 |------|-----|
 | `VITE_KAKAO_MAP_API_KEY` | 카카오 JavaScript 키 |
 | `ODCLOUD_SERVICE_KEY` | 공공데이터 인증키 (API용, 서버만 사용) |
+| `OPENAI_API_KEY` | (선택) OpenAI 키 — 없으면 규칙 기반 AI 동작 |
 
 4. `VITE_API_BASE_URL`은 **비워 두세요** → 같은 Vercel 도메인의 `/api/wifi` 사용
 5. **Deploy**

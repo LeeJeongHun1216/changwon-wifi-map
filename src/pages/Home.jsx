@@ -1,4 +1,5 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
@@ -16,6 +17,7 @@ const DEFAULT_VISIBLE = Object.fromEntries(CARRIERS.map((c) => [c, true]));
 
 export default function Home() {
   const { data, loading, error } = useWifiData();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [carrier, setCarrier] = useState('전체');
@@ -23,6 +25,23 @@ export default function Home() {
   const [visibleCarriers, setVisibleCarriers] = useState(DEFAULT_VISIBLE);
   const [clusterEnabled, setClusterEnabled] = useState(false);
   const [mapResetKey, setMapResetKey] = useState(0);
+
+  useEffect(() => {
+    const q = searchParams.get('q');
+    const c = searchParams.get('carrier');
+    const y = searchParams.get('year');
+
+    if (q) {
+      setQuery(q);
+      setSearchQuery(q);
+    }
+    if (c) setCarrier(c);
+    if (y) setYear(y);
+
+    if (q || c || y) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const years = useMemo(() => getAvailableYears(data), [data]);
 
@@ -48,7 +67,9 @@ export default function Home() {
 
   const referenceDate = allStats.latestInstall;
 
-  const shouldAutoFit = Boolean(searchQuery.trim()) && visibleMapData.length <= 50;
+  const shouldAutoFit = useMemo(() => {
+    return Boolean(searchQuery.trim()) && visibleMapData.length <= 50;
+  }, [searchQuery, visibleMapData.length]);
 
   const handleSearch = useCallback(() => {
     setSearchQuery(query);
@@ -72,6 +93,38 @@ export default function Home() {
       setMapResetKey((k) => k + 1);
     }
   }, [searchQuery]);
+
+  const handleAssistantActions = useCallback((actions) => {
+    if (!actions) return;
+
+    if (actions.clearSearch) {
+      setQuery('');
+      setSearchQuery('');
+      setCarrier('전체');
+      setYear('전체');
+      setVisibleCarriers(DEFAULT_VISIBLE);
+      setMapResetKey((k) => k + 1);
+      return;
+    }
+
+    if (actions.syncQuery !== undefined || actions.searchQuery !== undefined) {
+      const q = actions.syncQuery ?? actions.searchQuery ?? '';
+      setQuery(q);
+      setSearchQuery(q);
+    }
+
+    if (actions.carrier) {
+      setCarrier(actions.carrier);
+    }
+
+    if (actions.year) {
+      setYear(actions.year);
+    }
+
+    if (actions.resetMap) {
+      setMapResetKey((k) => k + 1);
+    }
+  }, []);
 
   if (loading) {
     return (
@@ -115,6 +168,7 @@ export default function Home() {
           years={years}
           stats={allStats}
           referenceDate={referenceDate}
+          onAssistantActions={handleAssistantActions}
         />
 
         <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-3 md:p-0">

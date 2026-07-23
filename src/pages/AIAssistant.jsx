@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Bot, Sparkles, MessageSquare, Zap } from 'lucide-react';
 import Header from '../components/Header';
 import AIChat from '../components/AIChat';
+import { useNavigate } from 'react-router-dom';
 
 const features = [
   {
@@ -22,6 +23,26 @@ const features = [
 ];
 
 export default function AIAssistant() {
+  const navigate = useNavigate();
+
+  const handleApplyActions = (actions) => {
+    if (!actions) return;
+
+    const params = new URLSearchParams();
+    if (actions.searchQuery || actions.syncQuery) {
+      params.set('q', actions.syncQuery ?? actions.searchQuery);
+    }
+    if (actions.carrier && actions.carrier !== '전체') {
+      params.set('carrier', actions.carrier);
+    }
+    if (actions.year && actions.year !== '전체') {
+      params.set('year', actions.year);
+    }
+
+    const qs = params.toString();
+    navigate(qs ? `/?${qs}` : '/');
+  };
+
   return (
     <div className="flex min-h-full flex-col bg-bg">
       <Header />
@@ -57,7 +78,7 @@ export default function AIAssistant() {
           ))}
         </div>
 
-        <AIChat />
+        <AIChat onApplyActions={handleApplyActions} expanded />
       </div>
     </div>
   );

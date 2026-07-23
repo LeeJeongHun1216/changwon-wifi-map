@@ -13,6 +13,7 @@ export default function Sidebar({
   years,
   stats,
   referenceDate,
+  onAssistantActions,
 }) {
   return (
     <aside className="flex w-full shrink-0 flex-col gap-4 overflow-y-auto p-4 md:w-[380px] md:p-5">
@@ -27,7 +28,7 @@ export default function Sidebar({
         years={years}
       />
       <StatisticsCard stats={stats} referenceDate={referenceDate} />
-      <AIChat />
+      <AIChat onApplyActions={onAssistantActions} />
     </aside>
   );
 }

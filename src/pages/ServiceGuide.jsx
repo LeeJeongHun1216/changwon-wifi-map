@@ -23,7 +23,7 @@ const sections = [
       '장소명·주소 검색 및 통신사/설치년도 필터',
       'KT / SKT / SKB / LGU+ / 복합 통신사별 색상 마커',
       'AP 상세 정보 및 길찾기 연동',
-      'AI Wi-Fi Assistant (준비 중)',
+      'AI Wi-Fi Assistant — 자연어 검색·필터·지도 연동',
     ],
   },
   {

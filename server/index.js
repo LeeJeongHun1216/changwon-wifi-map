@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { fetchWifiFromOdcloud, getCacheMeta } from './fetchOdcloud.js';
 import { normalizeWifiList } from './normalizeWifi.js';
+import { handleAssistantChat } from './assistant/handleChat.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,6 +50,19 @@ app.get('/api/wifi', async (_req, res) => {
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'changwon-wifi-map-api', cache: getCacheMeta() });
+});
+
+app.post('/api/assistant/chat', async (req, res) => {
+  try {
+    const { message, location } = req.body ?? {};
+    const result = await handleAssistantChat({
+      message,
+      location: location?.lat != null ? location : null,
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.listen(PORT, () => {
