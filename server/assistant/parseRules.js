@@ -1,6 +1,14 @@
 import { extractKeywordFromMessage } from './wifiQuery.js';
 
-const CARRIERS = ['KT', 'SKT', 'SKB', 'LGU+', '복합'];
+const CARRIER_PATTERNS = [
+  { carrier: 'LGU+', pattern: /LGU\+?|엘지\s*유플러스|유플러스/i },
+  { carrier: 'SKB', pattern: /SKB|에스케이\s*브로드밴드|브로드밴드/i },
+  { carrier: 'SKT', pattern: /SKT|에스케이\s*텔레콤|에스케이텔레콤/i },
+  { carrier: 'KT', pattern: /(?<![A-Z])KT(?![A-Z])|케이\s*티|케이티/i },
+  { carrier: '복합', pattern: /복합/i },
+];
+
+const FILTER_HINT = /만|필터|표시|보여/;
 
 /**
  * @returns {{ intent: string, query?: string, carrier?: string, year?: string, statType?: string }}
@@ -29,23 +37,18 @@ export function parseIntentRules(message) {
     return { intent: 'stats', statType: 'summary' };
   }
 
-  for (const c of CARRIERS) {
-    const pattern =
-      c === 'LGU+'
-        ? /LGU\+?|엘지|유플러스/i
-        : c === '복합'
-          ? /복합/
-          : new RegExp(`\\b${c}\\b|${c === 'SKB' ? '브로드밴드' : ''}`, 'i');
-    if (pattern.test(text) && /만|필터|표시|보여/.test(text)) {
-      return { intent: 'filter_carrier', carrier: c };
+  if (FILTER_HINT.test(text)) {
+    for (const { carrier, pattern } of CARRIER_PATTERNS) {
+      if (pattern.test(text)) {
+        return { intent: 'filter_carrier', carrier };
+      }
     }
   }
 
-  if (/^KT$|^SKT$|^SKB$|^LGU\+?$|^복합$/.test(text.trim())) {
-    const c = text.trim() === 'LGU' ? 'LGU+' : text.trim();
-    if (CARRIERS.includes(c)) {
-      return { intent: 'filter_carrier', carrier: c };
-    }
+  const exact = text.replace(/\s+/g, '').toUpperCase();
+  const exactMap = { KT: 'KT', SKT: 'SKT', SKB: 'SKB', 'LGU+': 'LGU+', LGU: 'LGU+', 복합: '복합' };
+  if (exactMap[exact]) {
+    return { intent: 'filter_carrier', carrier: exactMap[exact] };
   }
 
   const yearMatch = text.match(/(20\d{2})\s*년/);

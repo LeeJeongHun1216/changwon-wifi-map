@@ -52,7 +52,14 @@ export function executeIntent(intent, allData, location) {
     }
 
     case 'filter_carrier': {
-      const carrier = intent.carrier || 'KT';
+      const carrier = intent.carrier;
+      if (!carrier || carrier === '전체') {
+        return {
+          reply: '어떤 통신사를 보여드릴까요? KT, SKT, SKB, LGU+, 복합 중에서 말씀해 주세요.',
+          actions: buildActions({}),
+          resultCount: 0,
+        };
+      }
       const filtered = filterWifiList(allData, { carrier });
       const lines = formatPlaceList(filtered);
       return {
