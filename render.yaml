@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: changwon-wifi-map-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: ODCLOUD_SERVICE_KEY
+        sync: false
