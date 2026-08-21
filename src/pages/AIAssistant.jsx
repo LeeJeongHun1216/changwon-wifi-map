@@ -29,8 +29,8 @@ export default function AIAssistant() {
     if (!actions) return;
 
     const params = new URLSearchParams();
-    if (actions.searchQuery || actions.syncQuery) {
-      params.set('q', actions.syncQuery ?? actions.searchQuery);
+    if (actions.searchQuery) {
+      params.set('q', actions.searchQuery);
     }
     if (actions.carrier && actions.carrier !== '전체') {
       params.set('carrier', actions.carrier);

@@ -45,11 +45,7 @@ export default function AIChat({
         {
           role: 'assistant',
           content: result.reply,
-          meta: {
-            resultCount: result.resultCount,
-            needsLocation: result.needsLocation,
-            poweredBy: result.poweredBy,
-          },
+          meta: { resultCount: result.resultCount },
         },
       ]);
 

@@ -4,7 +4,6 @@ import {
   findTopApLocations,
   computeStats,
   extractKeywordFromMessage,
-  parseCoord,
 } from './wifiQuery.js';
 
 function formatPlaceList(items, max = 3) {
@@ -13,22 +12,14 @@ function formatPlaceList(items, max = 3) {
 
 function buildActions(partial) {
   return {
-    searchQuery: partial.searchQuery,
-    syncQuery: partial.syncQuery,
+    searchQuery: partial.searchQuery ?? '',
     carrier: partial.carrier,
     year: partial.year,
-    fitMap: partial.fitMap ?? false,
     resetMap: partial.resetMap ?? false,
     clearSearch: partial.clearSearch ?? false,
-    focus: partial.focus,
   };
 }
 
-/**
- * @param {object} intent
- * @param {Array} allData
- * @param {{ lat: number, lng: number } | null} location
- */
 export function executeIntent(intent, allData, location) {
   const type = intent.intent || 'search';
 
@@ -67,11 +58,8 @@ export function executeIntent(intent, allData, location) {
         actions: buildActions({
           carrier,
           searchQuery: '',
-          syncQuery: '',
-          fitMap: filtered.length > 0 && filtered.length <= 50,
           resetMap: filtered.length > 50,
         }),
-        highlights: filtered.slice(0, 5),
         resultCount: filtered.length,
       };
     }
@@ -83,10 +71,8 @@ export function executeIntent(intent, allData, location) {
         reply: `${year}년 설치 AP ${filtered.length}개소를 찾았습니다.`,
         actions: buildActions({
           year,
-          fitMap: filtered.length > 0 && filtered.length <= 50,
           resetMap: filtered.length > 50,
         }),
-        highlights: filtered.slice(0, 5),
         resultCount: filtered.length,
       };
     }
@@ -121,15 +107,7 @@ export function executeIntent(intent, allData, location) {
         reply: `현재 위치에서 가장 가까운 곳은 **${top.item.AP설치장소명}** (${top.distanceKm.toFixed(2)}km)입니다.\n${lines.join('\n')}`,
         actions: buildActions({
           searchQuery: top.item.AP설치장소명,
-          syncQuery: top.item.AP설치장소명,
-          fitMap: true,
-          focus: {
-            lat: parseCoord(top.item.위도),
-            lng: parseCoord(top.item.경도),
-            name: top.item.AP설치장소명,
-          },
         }),
-        highlights: nearest.map((n) => n.item),
         resultCount: nearest.length,
       };
     }
@@ -143,10 +121,7 @@ export function executeIntent(intent, allData, location) {
           reply: `AP 대수가 가장 많은 곳은 **${best?.AP설치장소명}** (${best?.AP대수}대)입니다.\n${lines.join('\n')}`,
           actions: buildActions({
             searchQuery: best?.AP설치장소명 || '',
-            syncQuery: best?.AP설치장소명 || '',
-            fitMap: true,
           }),
-          highlights: top,
           resultCount: top.length,
         };
       }
@@ -175,7 +150,7 @@ export function executeIntent(intent, allData, location) {
       if (filtered.length === 0) {
         return {
           reply: `"${query}" 검색 결과가 없습니다. 다른 키워드로 시도해 보세요.`,
-          actions: buildActions({ searchQuery: query, syncQuery: query, fitMap: false }),
+          actions: buildActions({ searchQuery: query }),
           resultCount: 0,
         };
       }
@@ -185,11 +160,8 @@ export function executeIntent(intent, allData, location) {
         reply: `"${query}" 검색 결과 ${filtered.length}개소입니다.\n${lines.join('\n')}${filtered.length > 3 ? `\n… 외 ${filtered.length - 3}곳` : ''}`,
         actions: buildActions({
           searchQuery: query,
-          syncQuery: query,
-          fitMap: filtered.length <= 50,
           resetMap: filtered.length > 50,
         }),
-        highlights: filtered.slice(0, 5),
         resultCount: filtered.length,
       };
     }

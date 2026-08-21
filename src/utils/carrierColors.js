@@ -50,10 +50,6 @@ export const CHANGWON_CENTER = {
   lng: 128.681104,
 };
 
-export function getCarrierColor(carrier) {
-  return CARRIER_COLORS[carrier]?.bg ?? CARRIER_COLORS.기타.bg;
-}
-
 export function getCarrierStyle(carrier) {
   return CARRIER_COLORS[carrier] ?? CARRIER_COLORS.기타;
 }
@@ -66,5 +62,5 @@ export function getMarkerBackground(carrier) {
   if (carrier === '복합') {
     return 'conic-gradient(from 0deg, #2563EB, #F97316, #8B5CF6, #EC4899, #6366F1, #2563EB)';
   }
-  return getCarrierColor(carrier);
+  return CARRIER_COLORS[carrier]?.bg ?? CARRIER_COLORS.기타.bg;
 }

@@ -20,12 +20,8 @@ export async function handleAssistantChat({ message, location = null }) {
 
   return {
     reply: result.reply.replace(/\*\*(.*?)\*\*/g, '$1'),
-    replyMarkdown: result.reply,
     actions: result.actions,
-    highlights: result.highlights ?? [],
     resultCount: result.resultCount,
     needsLocation: result.needsLocation ?? false,
-    intent: intent.intent,
-    poweredBy: process.env.OPENAI_API_KEY ? 'openai+rules' : 'rules',
   };
 }

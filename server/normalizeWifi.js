@@ -22,7 +22,7 @@ export function parseCarrierCategory(raw) {
   return '기타';
 }
 
-export function normalizeWifiRecord(raw) {
+function normalizeWifiRecord(raw) {
   return {
     AP대수: raw.AP대수 ?? 0,
     AP설치장소명: raw.AP설치장소명 ?? '',
@@ -31,7 +31,7 @@ export function normalizeWifiRecord(raw) {
     주소: (raw['주  소'] ?? raw['주 소'] ?? raw.주소 ?? '').trim(),
     설치년월: raw.설치년월 ?? '',
     통신사: raw.통신사 ?? '',
-    통신사분류: parseCarrierCategory(raw.통신사),
+    통신사분류: raw.통신사분류 ?? parseCarrierCategory(raw.통신사),
   };
 }
 

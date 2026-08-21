@@ -1,4 +1,4 @@
-export function parseCarrierCategory(raw) {
+function parseCarrierCategory(raw) {
   if (!raw || typeof raw !== 'string') return '기타';
 
   const trimmed = raw.trim();
@@ -17,7 +17,7 @@ export function parseCarrierCategory(raw) {
   return '기타';
 }
 
-export function normalizeWifiRecord(raw) {
+function normalizeWifiRecord(raw) {
   return {
     AP대수: raw.AP대수 ?? 0,
     AP설치장소명: raw.AP설치장소명 ?? '',

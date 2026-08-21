@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { getCarrierCategory, getCarrierStyle } from '../utils/carrierColors';
+import { parseCoordinate } from '../utils/filters';
 import { openKakaoDirections, copyToClipboard } from '../utils/kakaoMap';
 
 export default function WifiInfoCard({ wifi, onClose }) {
@@ -29,7 +30,10 @@ export default function WifiInfoCard({ wifi, onClose }) {
   };
 
   const handleDirections = () => {
-    openKakaoDirections(parseFloat(wifi.위도), parseFloat(wifi.경도), wifi.AP설치장소명);
+    const lat = parseCoordinate(wifi.위도);
+    const lng = parseCoordinate(wifi.경도);
+    if (lat === null || lng === null) return;
+    openKakaoDirections(lat, lng, wifi.AP설치장소명);
   };
 
   return (

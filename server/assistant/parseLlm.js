@@ -19,7 +19,7 @@ const SYSTEM_PROMPT = `당신은 창원시 공공 Wi-Fi 지도 서비스의 inte
 - 서비스 설명 요청 → explain
 - 전체 보기 → reset`;
 
-export async function parseIntentWithLLM(message) {
+async function parseIntentWithLLM(message) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
 

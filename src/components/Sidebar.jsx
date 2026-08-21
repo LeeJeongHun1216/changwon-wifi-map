@@ -17,7 +17,7 @@ export function SidebarContent({
   compact = false,
 }) {
   return (
-    <div className={`flex w-full max-w-full flex-col gap-4 overflow-x-hidden ${compact ? '' : ''}`}>
+    <div className="flex w-full max-w-full flex-col gap-4 overflow-x-hidden">
       <SearchPanel
         query={query}
         onQueryChange={onQueryChange}

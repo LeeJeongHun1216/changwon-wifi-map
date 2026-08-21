@@ -2,7 +2,7 @@ import { normalizeWifiList } from '../utils/normalizeWifi';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
-export async function fetchWifiData() {
+async function fetchWifiData() {
   const response = await fetch('/data/wifi.json');
 
   if (!response.ok) {

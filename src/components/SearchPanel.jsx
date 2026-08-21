@@ -2,11 +2,6 @@ import { motion } from 'framer-motion';
 import { Search, ChevronDown } from 'lucide-react';
 import { CARRIERS, getCarrierStyle } from '../utils/carrierColors';
 
-const CARRIER_LABELS = {
-  SKB: 'SKB',
-  복합: '복합',
-};
-
 export default function SearchPanel({
   query,
   onQueryChange,
@@ -68,7 +63,7 @@ export default function SearchPanel({
         {CARRIERS.map((c) => (
           <FilterChip
             key={c}
-            label={CARRIER_LABELS[c] ?? c}
+            label={c}
             title={getCarrierStyle(c).fullName}
             active={carrier === c}
             onClick={() => onCarrierChange(c)}

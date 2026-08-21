@@ -84,10 +84,6 @@ export default function Home() {
     setSearchQuery(query);
   }, [query]);
 
-  const handleCarrierChange = useCallback((nextCarrier) => {
-    setCarrier(nextCarrier);
-  }, []);
-
   const handleToggleCarrier = useCallback((c) => {
     setVisibleCarriers((prev) => {
       const isOn = prev[c] !== false;
@@ -117,10 +113,9 @@ export default function Home() {
       return;
     }
 
-    if (actions.syncQuery !== undefined || actions.searchQuery !== undefined) {
-      const q = actions.syncQuery ?? actions.searchQuery ?? '';
-      setQuery(q);
-      setSearchQuery(q);
+    if (actions.searchQuery !== undefined) {
+      setQuery(actions.searchQuery);
+      setSearchQuery(actions.searchQuery);
     }
 
     if (actions.carrier) {
@@ -143,7 +138,7 @@ export default function Home() {
     onQueryChange: setQuery,
     onSearch: handleSearch,
     carrier,
-    onCarrierChange: handleCarrierChange,
+    onCarrierChange: setCarrier,
     year,
     onYearChange: setYear,
     years,
