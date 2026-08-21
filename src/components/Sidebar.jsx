@@ -17,7 +17,7 @@ export function SidebarContent({
   compact = false,
 }) {
   return (
-    <div className={`flex flex-col gap-4 ${compact ? '' : ''}`}>
+    <div className={`flex w-full max-w-full flex-col gap-4 overflow-x-hidden ${compact ? '' : ''}`}>
       <SearchPanel
         query={query}
         onQueryChange={onQueryChange}
@@ -27,11 +27,13 @@ export function SidebarContent({
         year={year}
         onYearChange={onYearChange}
         years={years}
+        compact={compact}
         disableEnterAnimation={compact}
       />
       <StatisticsCard
         stats={stats}
         referenceDate={referenceDate}
+        compact={compact}
         disableEnterAnimation={compact}
       />
       {!compact && <AIChat onApplyActions={onAssistantActions} />}

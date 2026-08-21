@@ -72,21 +72,19 @@ export default function AIChat({
   };
 
   const maxChatHeight = expanded ? 'max-h-80' : 'max-h-40';
+  const cardClass = `glass-card flex w-full max-w-full flex-col overflow-hidden rounded-2xl p-4 md:p-5 ${expanded ? 'min-h-[420px]' : ''}`;
+  const questionBtnClass =
+    'flex w-full items-center gap-2 rounded-xl border border-slate-200/80 bg-white/70 px-3 py-2.5 text-left text-xs text-slate-600 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50';
 
-  return (
-    <motion.div
-      initial={disableEnterAnimation ? false : { opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: disableEnterAnimation ? 0 : 0.45, delay: disableEnterAnimation ? 0 : 0.3 }}
-      className={`glass-card flex flex-col rounded-2xl p-5 ${expanded ? 'min-h-[420px]' : ''}`}
-    >
+  const content = (
+    <>
       <div className="mb-3 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-primary">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-primary">
           <Bot className="h-4 w-4 text-white" />
         </div>
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold text-slate-800">AI Wi-Fi Assistant</h2>
-          <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-600">
+        <div className="flex min-w-0 items-center gap-2">
+          <h2 className="truncate text-sm font-bold text-slate-800">AI Wi-Fi Assistant</h2>
+          <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-600">
             BETA
           </span>
         </div>
@@ -97,20 +95,33 @@ export default function AIChat({
       </p>
 
       <div className="mb-3 flex flex-col gap-2">
-        {SUGGESTED_QUESTIONS.map((question) => (
-          <motion.button
-            key={question}
-            whileHover={{ scale: 1.01, x: 2 }}
-            whileTap={{ scale: 0.98 }}
-            type="button"
-            disabled={loading}
-            onClick={() => runAssistant(question)}
-            className="flex items-center gap-2 rounded-xl border border-slate-200/80 bg-white/70 px-3 py-2.5 text-left text-xs text-slate-600 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50"
-          >
-            <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary/60" />
-            {question}
-          </motion.button>
-        ))}
+        {SUGGESTED_QUESTIONS.map((question) =>
+          disableEnterAnimation ? (
+            <button
+              key={question}
+              type="button"
+              disabled={loading}
+              onClick={() => runAssistant(question)}
+              className={questionBtnClass}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary/60" />
+              {question}
+            </button>
+          ) : (
+            <motion.button
+              key={question}
+              whileHover={{ scale: 1.01, x: 2 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              disabled={loading}
+              onClick={() => runAssistant(question)}
+              className={questionBtnClass}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary/60" />
+              {question}
+            </motion.button>
+          ),
+        )}
       </div>
 
       <div
@@ -121,7 +132,7 @@ export default function AIChat({
           {messages.map((msg, i) => (
             <motion.div
               key={`${msg.role}-${i}-${msg.content.slice(0, 12)}`}
-              initial={{ opacity: 0, y: 6 }}
+              initial={disableEnterAnimation ? false : { opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               className={`rounded-xl px-3 py-2 text-xs whitespace-pre-wrap ${
                 msg.role === 'user'
@@ -156,26 +167,42 @@ export default function AIChat({
           e.preventDefault();
           runAssistant();
         }}
-        className="mt-auto flex gap-2"
+        className="mt-auto w-full"
       >
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          disabled={loading}
-          placeholder="궁금한 내용을 입력하세요..."
-          className="flex-1 rounded-xl border border-slate-200/80 bg-white/90 px-4 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
-        />
-        <motion.button
-          whileHover={{ scale: loading ? 1 : 1.05 }}
-          whileTap={{ scale: loading ? 1 : 0.95 }}
-          type="submit"
-          disabled={loading || !input.trim()}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-md shadow-primary/25 disabled:opacity-50"
-        >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-        </motion.button>
+        <div className="flex w-full items-center rounded-xl border border-slate-200/80 bg-white/90 p-1 transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={loading}
+            placeholder="궁금한 내용을 입력하세요..."
+            className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 outline-none disabled:opacity-60"
+          />
+          <button
+            type="submit"
+            disabled={loading || !input.trim()}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/25 disabled:opacity-50"
+            aria-label="전송"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+          </button>
+        </div>
       </form>
+    </>
+  );
+
+  if (disableEnterAnimation) {
+    return <div className={cardClass}>{content}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.45, delay: 0.3 }}
+      className={cardClass}
+    >
+      {content}
     </motion.div>
   );
 }

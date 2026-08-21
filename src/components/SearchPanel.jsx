@@ -16,6 +16,7 @@ export default function SearchPanel({
   year,
   onYearChange,
   years,
+  compact = false,
   disableEnterAnimation = false,
 }) {
   const handleSubmit = (e) => {
@@ -23,34 +24,38 @@ export default function SearchPanel({
     onSearch?.();
   };
 
-  return (
-    <motion.div
-      initial={disableEnterAnimation ? false : { opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: disableEnterAnimation ? 0 : 0.45, delay: disableEnterAnimation ? 0 : 0.1 }}
-      className="glass-card rounded-2xl p-5"
-    >
-      <div className="mb-4 flex items-center gap-2">
-        <Search className="h-4 w-4 text-primary" />
-        <h2 className="text-sm font-bold text-slate-800">Wi-Fi 검색</h2>
-      </div>
+  const cardClass = `glass-card w-full max-w-full overflow-hidden rounded-2xl ${compact ? 'p-4' : 'p-5'}`;
 
-      <form onSubmit={handleSubmit} className="mb-4 flex gap-2">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="장소를 검색하세요 (예: 창원역, 용지호수공원)"
-          className="flex-1 rounded-xl border border-slate-200/80 bg-white/90 px-4 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-        />
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          type="submit"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-md shadow-primary/25"
-        >
-          <Search className="h-4 w-4" />
-        </motion.button>
+  const content = (
+    <>
+      {!compact && (
+        <div className="mb-4 flex items-center gap-2">
+          <Search className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-bold text-slate-800">Wi-Fi 검색</h2>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mb-4">
+        <div className="flex w-full items-center rounded-xl border border-slate-200/80 bg-white/90 p-1 transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => onQueryChange(e.target.value)}
+            placeholder={
+              compact
+                ? '장소를 검색하세요...'
+                : '장소를 검색하세요 (예: 창원역, 용지호수공원)'
+            }
+            className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 outline-none"
+          />
+          <button
+            type="submit"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-white shadow-md shadow-primary/25"
+            aria-label="검색"
+          >
+            <Search className="h-4 w-4" />
+          </button>
+        </div>
       </form>
 
       <div className="flex flex-wrap gap-2">
@@ -58,6 +63,7 @@ export default function SearchPanel({
           label="전체"
           active={carrier === '전체'}
           onClick={() => onCarrierChange('전체')}
+          staticChip={compact}
         />
         {CARRIERS.map((c) => (
           <FilterChip
@@ -67,6 +73,7 @@ export default function SearchPanel({
             active={carrier === c}
             onClick={() => onCarrierChange(c)}
             carrier={c}
+            staticChip={compact}
           />
         ))}
       </div>
@@ -86,11 +93,26 @@ export default function SearchPanel({
         </select>
         <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
       </div>
+    </>
+  );
+
+  if (disableEnterAnimation) {
+    return <div className={cardClass}>{content}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.45, delay: 0.1 }}
+      className={cardClass}
+    >
+      {content}
     </motion.div>
   );
 }
 
-function FilterChip({ label, title, active, onClick, carrier }) {
+function FilterChip({ label, title, active, onClick, carrier, staticChip = false }) {
   const carrierStyles = {
     KT: active ? 'bg-kt text-white' : 'bg-blue-50 text-kt hover:bg-blue-100',
     SKT: active ? 'bg-skt text-white' : 'bg-orange-50 text-skt hover:bg-orange-100',
@@ -105,6 +127,16 @@ function FilterChip({ label, title, active, onClick, carrier }) {
       ? 'bg-primary text-white shadow-sm shadow-primary/20'
       : 'bg-slate-100 text-slate-600 hover:bg-slate-200';
 
+  const className = `rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${style}`;
+
+  if (staticChip) {
+    return (
+      <button type="button" title={title} onClick={onClick} className={className}>
+        {label}
+      </button>
+    );
+  }
+
   return (
     <motion.button
       whileHover={{ scale: 1.03 }}
@@ -112,7 +144,7 @@ function FilterChip({ label, title, active, onClick, carrier }) {
       type="button"
       title={title}
       onClick={onClick}
-      className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${style}`}
+      className={className}
     >
       {label}
     </motion.button>

@@ -179,13 +179,13 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-bg">
+    <div className="flex h-dvh max-w-full flex-col overflow-hidden bg-bg">
       <Header />
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
         <Sidebar {...sidebarProps} />
 
-        <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden md:p-0">
+        <main className="relative flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-hidden md:p-0">
           <MapContainer
             wifiData={searchFilteredData}
             stats={displayStats}
@@ -218,7 +218,7 @@ export default function Home() {
               />
             )}
             {mobilePanel === 'filter' && (
-              <div className="glass-card rounded-2xl p-4">
+              <div className="glass-card w-full max-w-full overflow-hidden rounded-2xl p-4">
                 <CarrierLegendContent
                   visibleCarriers={visibleCarriers}
                   onToggle={handleToggleCarrier}
