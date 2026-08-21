@@ -39,7 +39,7 @@ export default function WifiInfoCard({ wifi, onClose }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 16, scale: 0.95 }}
         transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-        className="glass-card-strong absolute bottom-[8.5rem] left-1/2 z-20 w-[calc(100%-1.5rem)] max-w-sm -translate-x-1/2 rounded-2xl p-4 md:bottom-24 md:left-auto md:right-6 md:w-[calc(100%-2rem)] md:translate-x-0 md:p-5"
+        className="glass-card-strong absolute bottom-[8.5rem] left-1/2 z-30 w-[calc(100%-1.5rem)] max-w-sm -translate-x-1/2 rounded-2xl p-4 md:bottom-36 md:max-w-md md:p-5 xl:bottom-32"
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
